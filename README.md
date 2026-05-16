@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Release: v0.1.3](https://img.shields.io/badge/release-v0.1.3-blue.svg)](https://github.com/Virtualdesign0/GarbageMan/releases/tag/v0.1.3)
-[![Benchmarks](https://img.shields.io/badge/benchmarks-BENCHMARK.md-blue.svg)](BENCHMARK.md)
+[![Benchmarks](https://img.shields.io/badge/benchmarks-BENCHMARKS.md-blue.svg)](BENCHMARKS.md)
 
 A typed lifecycle and cleanup manager for Roblox Luau.
 
