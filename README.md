@@ -1,7 +1,7 @@
 # GarbageMan
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Release: v0.1.3](https://img.shields.io/badge/release-v0.1.3-blue.svg)](https://github.com/Virtualdesign0/GarbageMan/releases/tag/v0.1.3)
+[![Release: v0.1.4](https://img.shields.io/badge/release-v0.1.4-blue.svg)](https://github.com/Virtualdesign0/GarbageMan/releases/tag/v0.1.4)
 [![Benchmarks](https://img.shields.io/badge/benchmarks-BENCHMARKS.md-blue.svg)](BENCHMARKS.md)
 
 A typed lifecycle and cleanup manager for Roblox Luau.
@@ -136,7 +136,7 @@ Package configuration used in this repository:
 ```toml
 [package]
 name = "virtualdesign0/garbageman"
-version = "0.1.3"
+version = "0.1.4"
 registry = "https://github.com/UpliftGames/wally-index"
 realm = "shared"
 ```
@@ -147,7 +147,7 @@ To use this package as a dependency in another project:
 
 ```toml
 [dependencies]
-GarbageMan = "virtualdesign0/garbageman@0.1.3"
+GarbageMan = "virtualdesign0/garbageman@0.1.4"
 ```
 
 Then install the package:
