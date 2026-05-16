@@ -1,6 +1,6 @@
 # GarbageMan Benchmarks
 
-These benchmarks were run in Roblox Studio on the server runtime. Each case was run 7 times, and the median result is used as the main comparison point.
+These benchmarks were run in Roblox Studio on the server runtime. Each case was run 7 times and the median result is used as the main comparison point.
 
 `RawArray` is included only as a very small baseline that stores cleanup entries in a plain array and cleans them in reverse order. It is not feature-equivalent with GarbageMan.
 
@@ -29,7 +29,7 @@ For optional comparison, if `ReplicatedStorage.Trove` or `ReplicatedStorage.Maid
 ## Notes
 
 - `Add function + Clean` is very close to the raw array baseline: 1.659 ms vs 1.544 ms for 10,000 tasks.
-- `Add Destroy table + Clean` is heavier because GarbageMan resolves cleanup methods, tracks object indices/tags, stores debug state, and wraps cleanup with error handling.
+- `Add Destroy table + Clean` is heavier because GarbageMan resolves cleanup methods, tracks object indices/tags, stores debug state and wraps cleanup with error handling.
 - `Connect + Clean` includes real `BindableEvent` connection creation and disconnection.
 - `Replace tag` measures repeated replacement of a tagged resource. This is one of GarbageMan's core convenience features.
 - `Add traceback capture` is measured separately because traceback capture is a debug feature and should normally stay disabled in production.
