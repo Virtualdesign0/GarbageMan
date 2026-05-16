@@ -20,7 +20,7 @@ local expect: Expect = env.expect
 
 return function()
 	describe("GarbageMan API helpers", function()
-		it("supports Add, Replace and Get helpers", function()
+		it("supports Add, Replace, and Get helpers", function()
 			local garbageMan = GarbageMan.new()
 			local first: any = {
 				cleaned = false,
@@ -67,6 +67,100 @@ return function()
 			garbageMan:Destroy()
 
 			expect(constructed.destroyed).to.equal(true)
+		end)
+
+		it("adds many resources with default cleanup", function()
+			local garbageMan = GarbageMan.new()
+			local cleaned = 0
+
+			local function firstCleanup()
+				cleaned += 1
+			end
+
+			local function secondCleanup()
+				cleaned += 1
+			end
+
+			local function thirdCleanup()
+				cleaned += 1
+			end
+
+			expect(garbageMan:AddMany(firstCleanup, secondCleanup, thirdCleanup)).to.equal(garbageMan)
+			expect(garbageMan:Size()).to.equal(3)
+
+			garbageMan:Clean()
+
+			expect(cleaned).to.equal(3)
+		end)
+
+		it("cleans temporary resources after their delay", function()
+			local garbageMan = GarbageMan.new("TemporaryResource")
+			local cleaned = false
+
+			local function cleanupTemporary()
+				cleaned = true
+			end
+
+			local temporary = garbageMan:AddTemporary(cleanupTemporary, 0, nil, "Trail")
+
+			expect(garbageMan:Contains(temporary)).to.equal(true)
+			expect(garbageMan:ContainsTag("Trail")).to.equal(true)
+
+			task.wait()
+
+			expect(cleaned).to.equal(true)
+			expect(garbageMan:IsDestroyed()).to.equal(false)
+			expect(garbageMan:Size()).to.equal(0)
+			expect(garbageMan:ContainsTag("Trail")).to.equal(false)
+
+			garbageMan:Destroy()
+		end)
+
+		it("does not remove replacement resources after a temporary tag is reused", function()
+			local garbageMan = GarbageMan.new("TemporaryReplacement")
+			local firstCleaned = false
+			local secondCleaned = false
+
+			local function cleanupFirst()
+				firstCleaned = true
+			end
+
+			local function cleanupSecond()
+				secondCleaned = true
+			end
+
+			garbageMan:AddTemporary(cleanupFirst, 0, nil, "Effect")
+			garbageMan:Replace("Effect", cleanupSecond)
+
+			expect(firstCleaned).to.equal(true)
+			expect(secondCleaned).to.equal(false)
+			expect(garbageMan:ContainsTag("Effect")).to.equal(true)
+
+			task.wait()
+
+			expect(secondCleaned).to.equal(false)
+			expect(garbageMan:Size()).to.equal(1)
+
+			garbageMan:Destroy()
+
+			expect(secondCleaned).to.equal(true)
+		end)
+
+		it("does not run temporary cleanup twice after destroy", function()
+			local garbageMan = GarbageMan.new("DestroyedTemporary")
+			local cleanedCount = 0
+
+			local function cleanupTemporary()
+				cleanedCount += 1
+			end
+
+			garbageMan:AddTemporary(cleanupTemporary, 0)
+			garbageMan:Destroy()
+
+			task.wait()
+
+			expect(cleanedCount).to.equal(1)
+			expect(garbageMan:Size()).to.equal(0)
 		end)
 
 		it("connects signals and supports one-shot fallback connections", function()
@@ -118,6 +212,102 @@ return function()
 
 			expect(connection.Connected).to.equal(false)
 			expect(disconnects).to.equal(2)
+		end)
+
+		it("destroys when a signal fires", function()
+			local garbageMan = GarbageMan.new()
+			local callbacks: { any } = {}
+			local signal: any = {}
+
+			function signal:Connect(callback)
+				table.insert(callbacks, callback)
+
+				local connection: any = {
+					Connected = true,
+				}
+
+				function connection:Disconnect()
+					self.Connected = false
+				end
+
+				return connection
+			end
+
+			local connection = garbageMan:DestroyOnSignal(signal, "signal fired")
+
+			callbacks[1]()
+
+			expect(connection.Connected).to.equal(false)
+			expect(garbageMan:IsDestroyed()).to.equal(true)
+			expect(garbageMan:GetDestroyReason()).to.equal("signal fired")
+		end)
+
+		it("replaces tagged signal connections", function()
+			local garbageMan = GarbageMan.new()
+			local callbacks: { any } = {}
+			local signal: any = {}
+			local fired = 0
+
+			function signal:Connect(callback)
+				table.insert(callbacks, callback)
+
+				local connection: any = {
+					Connected = true,
+				}
+
+				function connection:Disconnect()
+					self.Connected = false
+				end
+
+				return connection
+			end
+
+			local function onFirst()
+				fired += 1
+			end
+
+			local function onSecond()
+				fired += 10
+			end
+
+			local firstConnection = garbageMan:ReplaceConnection("Input", signal, onFirst)
+			local secondConnection = garbageMan:ReplaceConnection("Input", signal, onSecond)
+
+			expect(firstConnection.Connected).to.equal(false)
+			expect(secondConnection.Connected).to.equal(true)
+			expect(garbageMan:Get("Input")).to.equal(secondConnection)
+
+			callbacks[2]()
+
+			expect(fired).to.equal(10)
+
+			garbageMan:Clean()
+
+			expect(secondConnection.Connected).to.equal(false)
+		end)
+
+		it("replaces tweens with Cancel cleanup", function()
+			local garbageMan = GarbageMan.new()
+			local firstTween: any = {
+				cancelled = false,
+				Cancel = function(self: any)
+					self.cancelled = true
+				end,
+			}
+			local secondTween: any = {
+				cancelled = false,
+				Cancel = function(self: any)
+					self.cancelled = true
+				end,
+			}
+
+			expect(garbageMan:ReplaceTween("Tween:Open", firstTween)).to.equal(firstTween)
+			expect(garbageMan:ReplaceTween("Tween:Open", secondTween)).to.equal(secondTween)
+			expect(firstTween.cancelled).to.equal(true)
+
+			garbageMan:Destroy()
+
+			expect(secondTween.cancelled).to.equal(true)
 		end)
 
 		it("removes a tagged resource", function()
@@ -479,6 +669,229 @@ return function()
 			expect(typeof(cancelWarning)).to.equal("function")
 
 			cancelWarning()
+			garbageMan:Destroy()
+		end)
+
+		it("allows Clean after Destroy as a no-op", function()
+			local garbageMan = GarbageMan.new()
+
+			garbageMan:Destroy()
+			garbageMan:Clean()
+
+			expect(garbageMan:IsDestroyed()).to.equal(true)
+			expect(garbageMan:Size()).to.equal(0)
+		end)
+
+		it("cleans after a delay and supports cancellation", function()
+			local delayed = GarbageMan.new("DelayedClean")
+			local cancelled = GarbageMan.new("CancelledClean")
+			local cleaned = false
+			local cancelledCleaned = false
+
+			delayed:Add(function()
+				cleaned = true
+			end)
+
+			cancelled:Add(function()
+				cancelledCleaned = true
+			end)
+
+			local cancelClean = cancelled:CleanAfter(0)
+			cancelClean()
+
+			delayed:CleanAfter(0)
+
+			task.wait()
+
+			expect(delayed:IsDestroyed()).to.equal(false)
+			expect(delayed:Size()).to.equal(0)
+			expect(cleaned).to.equal(true)
+			expect(cancelledCleaned).to.equal(false)
+
+			delayed:Destroy()
+			cancelled:Destroy()
+		end)
+
+		it("destroys after a delay and supports cancellation", function()
+			local delayed = GarbageMan.new("DelayedDestroy")
+			local cancelled = GarbageMan.new("CancelledDestroy")
+			local cleaned = false
+
+			delayed:Add(function()
+				cleaned = true
+			end)
+
+			local cancelDestroy = cancelled:DestroyAfter(0, "cancelled")
+			cancelDestroy()
+
+			delayed:DestroyAfter(0, "timeout")
+
+			task.wait()
+
+			expect(delayed:IsDestroyed()).to.equal(true)
+			expect(delayed:GetDestroyReason()).to.equal("timeout")
+			expect(cleaned).to.equal(true)
+			expect(cancelled:IsDestroyed()).to.equal(false)
+
+			cancelled:Destroy()
+		end)
+
+		it("routes delayed destroy cleanup errors through the configured error handler", function()
+			local garbageMan = GarbageMan.new("DelayedError")
+			local handled = false
+			local handledScope: any = nil
+
+			GarbageMan.configure({
+				errorHandler = function(message, scope)
+					handled = message ~= nil
+					handledScope = scope
+				end,
+			})
+
+			garbageMan:Add(function()
+				error("delayed cleanup failed")
+			end)
+
+			garbageMan:DestroyAfter(0, "delayed")
+
+			task.wait()
+
+			expect(handled).to.equal(true)
+			expect(handledScope).to.equal(garbageMan)
+			expect(garbageMan:GetDestroyReason()).to.equal("delayed")
+
+			GarbageMan.configure({
+				errorHandler = false,
+			})
+		end)
+
+		it("counts cleanups even when profiling is disabled", function()
+			GarbageMan.configure({
+				profiling = false,
+			})
+
+			local garbageMan = GarbageMan.new("CleanupCount")
+			local summaryFound = false
+
+			garbageMan:Add(function() end)
+			garbageMan:Clean()
+
+			for _, summary in GarbageMan.Debug.getSummary() do
+				if summary.name == "CleanupCount" then
+					summaryFound = true
+					expect(summary.cleanupCount).to.equal(1)
+					expect(summary.lastCleanupDuration).to.equal(0)
+					expect(summary.peakCleanupDuration).to.equal(0)
+				end
+			end
+
+			expect(summaryFound).to.equal(true)
+
+			garbageMan:Destroy()
+		end)
+
+		it("tracks cleanup profiling when enabled", function()
+			GarbageMan.configure({
+				profiling = true,
+			})
+
+			local garbageMan = GarbageMan.new("ProfiledScope")
+			local summaryFound = false
+
+			garbageMan:Add(function() end)
+			garbageMan:Clean()
+
+			for _, summary in GarbageMan.Debug.getSummary() do
+				if summary.name == "ProfiledScope" then
+					summaryFound = true
+					expect(summary.cleanupCount).to.equal(1)
+					expect(typeof(summary.lastCleanupDuration)).to.equal("number")
+					expect(typeof(summary.peakCleanupDuration)).to.equal("number")
+				end
+			end
+
+			expect(summaryFound).to.equal(true)
+
+			garbageMan:Destroy()
+
+			GarbageMan.configure({
+				profiling = false,
+			})
+		end)
+
+		it("cleans resources in batches", function()
+			local garbageMan = GarbageMan.new()
+			local cleaned = 0
+
+			garbageMan:Add(function()
+				cleaned += 1
+			end)
+
+			garbageMan:Add(function()
+				cleaned += 1
+			end)
+
+			garbageMan:Add(function()
+				cleaned += 1
+			end)
+
+			garbageMan:CleanBatched(2)
+
+			expect(cleaned).to.equal(0)
+
+			task.wait()
+			task.wait()
+
+			expect(cleaned).to.equal(3)
+			expect(garbageMan:Size()).to.equal(0)
+
+			garbageMan:Destroy()
+		end)
+
+		it("destroys resources in batches", function()
+			local garbageMan = GarbageMan.new("BatchedDestroy")
+			local cleaned = 0
+
+			garbageMan:Add(function()
+				cleaned += 1
+			end)
+
+			garbageMan:Add(function()
+				cleaned += 1
+			end)
+
+			garbageMan:DestroyBatched("batched", 1)
+
+			expect(garbageMan:IsDestroyed()).to.equal(true)
+			expect(garbageMan:GetDestroyReason()).to.equal("batched")
+
+			task.wait()
+			task.wait()
+
+			expect(cleaned).to.equal(2)
+		end)
+
+		it("rejects invalid delay and batch numbers", function()
+			local garbageMan = GarbageMan.new()
+			local nan = 0 / 0
+			local delayOk = pcall(function()
+				garbageMan:DestroyAfter(math.huge)
+			end)
+			local nanDelayOk = pcall(function()
+				garbageMan:WarnIfNotDestroyedAfter(nan)
+			end)
+			local batchOk = pcall(function()
+				garbageMan:CleanBatched(math.huge)
+			end)
+			local nanBatchOk = pcall(function()
+				garbageMan:DestroyBatched(nil, nan)
+			end)
+
+			expect(delayOk).to.equal(false)
+			expect(nanDelayOk).to.equal(false)
+			expect(batchOk).to.equal(false)
+			expect(nanBatchOk).to.equal(false)
+
 			garbageMan:Destroy()
 		end)
 
