@@ -78,6 +78,12 @@ function Cleanup.Run(object: any, cleanupMethod: CleanupMethod)
 	end
 
 	if cleanupMethod == THREAD_MARKER then
+		local runningThread: any = coroutine.running()
+
+		if object == runningThread then
+			return
+		end
+
 		local ok: boolean
 		local message: any
 
