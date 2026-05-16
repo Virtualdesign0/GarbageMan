@@ -7,12 +7,14 @@ include = [
 	"src/GarbageMan",
 	"default.project.json",
 	"README.md",
+	"BENCHMARKS.md",
 	"ROJO_WALLY.md",
 	"wally.toml",
 ]
 exclude = [
 	"tests",
-	"test.project.json",
+	"benchmarks",
+	"benchmark.project.json",
 ]
 
 [dependencies]
