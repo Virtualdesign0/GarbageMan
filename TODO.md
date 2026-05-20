@@ -2,7 +2,7 @@
 
 This is a small list of things I want to improve or revisit in GarbageMan over time.
 
-Some of these are confirmed improvements, some are just ideas I want to test first. I do not want to add features just for the sake of making the module look bigger. The goal is still to keep GarbageMan simple, typed, and easy to use in real Roblox projects.
+Some of these are confirmed improvements, some are just ideas I want to test first. I do not want to add features just for the sake of making the module look bigger. The goal is still to keep GarbageMan simple, typed and easy to use in real Roblox projects.
 
 ---
 
@@ -61,10 +61,7 @@ Some of these are confirmed improvements, some are just ideas I want to test fir
 ## Tests
 
 - [ ] Add more TestEZ specs
-- [ ] Test basic `Add` and `Clean` behavior
-- [ ] Test connection cleanup
 - [ ] Test Instance cleanup
-- [ ] Test function cleanup
 - [ ] Test custom cleanup method support
 - [ ] Test repeated cleanup calls
 - [ ] Test invalid cleanup inputs
@@ -102,12 +99,8 @@ These are not confirmed features. They are just things I may test later.
 
 ## Release / Package
 
-- [ ] Finalize the Wally package setup
 - [ ] Keep the RBXM download available in releases
 - [ ] Add proper release notes for new versions
-- [ ] Make releases easy to use for people who do not use Rojo
-- [ ] Keep the Rojo project files clean and easy to understand
-- [ ] Make sure the README always links to the latest release
 
 ---
 
@@ -118,7 +111,6 @@ These are not confirmed features. They are just things I may test later.
 - [ ] Do not add too many aliases
 - [ ] Do not hide cleanup mistakes too much
 - [ ] Do not make benchmarks misleading
-- [ ] Do not make normal Roblox usage feel over-engineered
 - [ ] Do not add debug tools that affect normal runtime performance
 
 ---
@@ -127,4 +119,4 @@ These are not confirmed features. They are just things I may test later.
 
 GarbageMan should stay small, typed and predictable.
 
-It should be simple enough to use in small systems, but still reliable enough for larger systems like weapons, NPC controllers, UI flows, projectiles, tools, round systems, and other temporary runtime logic.
+It should be simple enough to use in small systems but still reliable enough for larger systems like weapons, NPC controllers, UI flows, projectiles, tools, round systems other temporary runtime logic.
