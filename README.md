@@ -2,9 +2,12 @@
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Release: v0.1.4](https://img.shields.io/badge/release-v0.1.4-blue.svg)](https://github.com/Virtualdesign0/GarbageMan/releases/tag/v0.1.4)
+[![Documents](https://img.shields.io/badge/documents-website-blue.svg)](https://virtualdesign0.github.io/GarbageMan/)
 [![Benchmarks](https://img.shields.io/badge/benchmarks-BENCHMARKS.md-blue.svg)](BENCHMARKS.md)
 
 A typed lifecycle and cleanup manager for Roblox Luau.
+
+**Links:** [Documents](https://virtualdesign0.github.io/GarbageMan/) · [GitHub](https://github.com/Virtualdesign0/GarbageMan) · [Latest Release](https://github.com/Virtualdesign0/GarbageMan/releases/latest) · [RBXM](https://github.com/Virtualdesign0/GarbageMan/releases/latest/download/GarbageMan.rbxm)
 
 `GarbageMan` helps you keep temporary resources in one place and clean them up safely when a system is done. It is useful for connections, instances, promises, render step bindings, threads, functions, tweens, custom objects, UI controllers, tools, NPCs, hitboxes, projectiles and other runtime objects that should not live forever.
 
@@ -12,28 +15,36 @@ The idea is simple: create a scope, add the things that belong to that scope, th
 
 ---
 
+## Documentation
+
+For the full documentation, examples and API overview:
+
+[Documents](https://virtualdesign0.github.io/GarbageMan/)
+
+---
+
 ## Features
 
-- Typed Luau API
-- Tracks Roblox instances, connections, functions, threads, promises and custom cleanup objects
-- Supports custom cleanup methods like `"Destroy"`, `"Disconnect"`, `"Cancel"` or `"Clean"`
-- Tagged resources with `Replace()` and `Get()`
-- Object cleanup with `Remove()`
-- Tag cleanup with `RemoveTag()`
-- Ownership release with `Drop()` and `DropTag()`
-- Child scopes with `Extend()` and `Adopt()`
-- Signal helpers with `Connect()`, `Once()`, `DestroyOnSignal()` and `ReplaceConnection()`
-- Tween helper with `ReplaceTween()`
-- Temporary resource cleanup with `AddTemporary()`
-- Delayed cleanup with `CleanAfter()` and `DestroyAfter()`
-- RenderStep cleanup with `Render()`
-- Promise cleanup with `AddPromise()`
-- Instance lifecycle binding with `BindTo()` and `BindToAncestry()`
-- Deferred cleanup with `CleanDeferred()` and `DestroyDeferred()`
-- Batched cleanup with `CleanBatched()` and `DestroyBatched()`
-- Lifecycle hooks with `OnDestroying()` and `OnDestroyed()`
-- Debug summaries, leak warnings, failed cleanup tracking and optional add tracebacks
-- Optional cleanup profiling through `GarbageMan.configure()`
+* Typed Luau API
+* Tracks Roblox instances, connections, functions, threads, promises and custom cleanup objects
+* Supports custom cleanup methods like `"Destroy"`, `"Disconnect"`, `"Cancel"` or `"Clean"`
+* Tagged resources with `Replace()` and `Get()`
+* Object cleanup with `Remove()`
+* Tag cleanup with `RemoveTag()`
+* Ownership release with `Drop()` and `DropTag()`
+* Child scopes with `Extend()` and `Adopt()`
+* Signal helpers with `Connect()`, `Once()`, `DestroyOnSignal()` and `ReplaceConnection()`
+* Tween helper with `ReplaceTween()`
+* Temporary resource cleanup with `AddTemporary()`
+* Delayed cleanup with `CleanAfter()` and `DestroyAfter()`
+* RenderStep cleanup with `Render()`
+* Promise cleanup with `AddPromise()`
+* Instance lifecycle binding with `BindTo()` and `BindToAncestry()`
+* Deferred cleanup with `CleanDeferred()` and `DestroyDeferred()`
+* Batched cleanup with `CleanBatched()` and `DestroyBatched()`
+* Lifecycle hooks with `OnDestroying()` and `OnDestroyed()`
+* Debug summaries, leak warnings, failed cleanup tracking and optional add tracebacks
+* Optional cleanup profiling through `GarbageMan.configure()`
 
 ---
 
@@ -94,17 +105,7 @@ ReplicatedStorage
 
 If you do not use Rojo or Wally, you can download the prebuilt `GarbageMan.rbxm` file from GitHub Releases.
 
-Recommended release asset name:
-
-```text
-GarbageMan.rbxm
-```
-
-Latest release download link:
-
-```text
-https://github.com/Virtualdesign0/GarbageMan/releases/latest/download/GarbageMan.rbxm
-```
+**Download:** [RBXM](https://github.com/Virtualdesign0/GarbageMan/releases/latest/download/GarbageMan.rbxm)
 
 After downloading the file, drag it into `ReplicatedStorage` in Roblox Studio.
 
@@ -188,9 +189,9 @@ local GarbageMan = require(ReplicatedStorage.Packages.GarbageMan)
 
 The toolchain can include:
 
-- `rojo`
-- `selene`
-- `run-in-roblox`
+* `rojo`
+* `selene`
+* `run-in-roblox`
 
 To install the tools:
 
@@ -248,28 +249,28 @@ scope:Clean()
 
 ## Most Used Methods
 
-| Method | Use it for |
-|---|---|
-| `Add()` | Track one resource |
-| `AddMany()` | Track multiple default-cleanable resources |
-| `AddTemporary()` | Track one resource and clean it after a delay |
-| `Replace()` | Keep one resource for a tag |
-| `ReplaceConnection()` | Replace a tagged signal connection |
-| `ReplaceTween()` | Replace a tagged tween and cancel the old one |
-| `Get()` | Get a tagged resource |
-| `Remove()` | Remove and clean a resource |
-| `RemoveTag()` | Remove and clean a tagged resource |
-| `Drop()` | Remove ownership without cleaning |
-| `Clean()` | Reset a reusable scope |
-| `Destroy()` | Final cleanup |
-| `Extend()` | Create a child scope |
-| `Connect()` | Connect and track a signal |
-| `Once()` | Connect once and track the connection |
-| `DestroyOnSignal()` | Destroy the scope when a signal fires |
-| `CleanBatched()` | Clean resources in batches |
-| `DestroyBatched()` | Destroy the scope and clean resources in batches |
-| `CleanAfter()` | Clean the scope after a delay |
-| `DestroyAfter()` | Destroy the scope after a delay |
+| Method                | Use it for                                       |
+| --------------------- | ------------------------------------------------ |
+| `Add()`               | Track one resource                               |
+| `AddMany()`           | Track multiple default-cleanable resources       |
+| `AddTemporary()`      | Track one resource and clean it after a delay    |
+| `Replace()`           | Keep one resource for a tag                      |
+| `ReplaceConnection()` | Replace a tagged signal connection               |
+| `ReplaceTween()`      | Replace a tagged tween and cancel the old one    |
+| `Get()`               | Get a tagged resource                            |
+| `Remove()`            | Remove and clean a resource                      |
+| `RemoveTag()`         | Remove and clean a tagged resource               |
+| `Drop()`              | Remove ownership without cleaning                |
+| `Clean()`             | Reset a reusable scope                           |
+| `Destroy()`           | Final cleanup                                    |
+| `Extend()`            | Create a child scope                             |
+| `Connect()`           | Connect and track a signal                       |
+| `Once()`              | Connect once and track the connection            |
+| `DestroyOnSignal()`   | Destroy the scope when a signal fires            |
+| `CleanBatched()`      | Clean resources in batches                       |
+| `DestroyBatched()`    | Destroy the scope and clean resources in batches |
+| `CleanAfter()`        | Clean the scope after a delay                    |
+| `DestroyAfter()`      | Destroy the scope after a delay                  |
 
 ---
 
@@ -303,20 +304,20 @@ end)
 
 Roblox systems usually create resources that need to be cleaned later:
 
-- `RBXScriptConnection`
-- `Instance`
-- spawned threads
-- promises
-- tweens
-- render step bindings
-- temporary effects
-- UI objects
-- tools
-- weapons
-- hitboxes
-- projectiles
-- character controllers
-- NPC controllers
+* `RBXScriptConnection`
+* `Instance`
+* spawned threads
+* promises
+* tweens
+* render step bindings
+* temporary effects
+* UI objects
+* tools
+* weapons
+* hitboxes
+* projectiles
+* character controllers
+* NPC controllers
 
 You can clean these manually but it gets messy once the system grows.
 
@@ -353,10 +354,10 @@ Use `Clean()` when you want to reset a reusable scope.
 
 Good examples:
 
-- refreshing a UI
-- restarting a round
-- clearing temporary effects
-- resetting a controller without deleting the controller itself
+* refreshing a UI
+* restarting a round
+* clearing temporary effects
+* resetting a controller without deleting the controller itself
 
 ### Destroy
 
@@ -377,12 +378,12 @@ Use `Destroy()` when the scope is finished for good.
 
 Good examples:
 
-- player left
-- character removed
-- UI screen closed permanently
-- NPC despawned
-- weapon unequipped
-- projectile expired
+* player left
+* character removed
+* UI screen closed permanently
+* NPC despawned
+* weapon unequipped
+* projectile expired
 
 ---
 
@@ -411,20 +412,20 @@ end)
 
 Supported resources include:
 
-- `Instance`
-- `RBXScriptConnection`
-- connection-like objects with `Disconnect()`
-- functions
-- threads
-- promise-like objects
-- tables with `Destroy()`
-- tables with `destroy()`
-- tables with `Disconnect()`
-- tables with `disconnect()`
-- tables with `Cancel()`
-- tables with `cancel()`
-- tables with `Clean()`
-- tables with `clean()`
+* `Instance`
+* `RBXScriptConnection`
+* connection-like objects with `Disconnect()`
+* functions
+* threads
+* promise-like objects
+* tables with `Destroy()`
+* tables with `destroy()`
+* tables with `Disconnect()`
+* tables with `disconnect()`
+* tables with `Cancel()`
+* tables with `cancel()`
+* tables with `Clean()`
+* tables with `clean()`
 
 ---
 
@@ -462,11 +463,11 @@ scope:ReplaceTween("Tween:Open", tween)
 
 GarbageMan has three different delayed lifetime helpers:
 
-| Method | What it does |
-|---|---|
-| `AddTemporary()` | Cleans one resource after a delay |
-| `CleanAfter()` | Cleans the scope after a delay but keeps it reusable |
-| `DestroyAfter()` | Destroys the scope after a delay |
+| Method           | What it does                                         |
+| ---------------- | ---------------------------------------------------- |
+| `AddTemporary()` | Cleans one resource after a delay                    |
+| `CleanAfter()`   | Cleans the scope after a delay but keeps it reusable |
+| `DestroyAfter()` | Destroys the scope after a delay                     |
 
 ### AddTemporary
 
@@ -495,13 +496,13 @@ scope:AddTemporary(effect, 5, nil, "Effect:Spark")
 
 This is useful for:
 
-- temporary hitboxes
-- VFX parts
-- temporary sounds
-- trails
-- short UI effects
-- dropped items
-- short-lived projectiles
+* temporary hitboxes
+* VFX parts
+* temporary sounds
+* trails
+* short UI effects
+* dropped items
+* short-lived projectiles
 
 ### CleanAfter
 
@@ -1065,10 +1066,10 @@ scope:DestroyDeferred("Delayed cleanup")
 
 Behavior:
 
-- The scope is marked as destroyed immediately.
-- `OnDestroying` runs immediately.
-- Cleanup runs later.
-- `OnDestroyed` runs after the deferred cleanup attempt.
+* The scope is marked as destroyed immediately.
+* `OnDestroying` runs immediately.
+* Cleanup runs later.
+* `OnDestroyed` runs after the deferred cleanup attempt.
 
 If deferred destroy cleanup fails, GarbageMan reports the error through the configured error handler if one exists.
 
@@ -1094,10 +1095,10 @@ scope:DestroyBatched("Round ended", 50)
 
 Behavior:
 
-- The scope is marked as destroyed immediately.
-- Mutating methods such as `Add()` and `Replace()` cannot be used afterwards.
-- Cleanup work is processed in batches.
-- `OnDestroyed` runs after the batched cleanup attempt.
+* The scope is marked as destroyed immediately.
+* Mutating methods such as `Add()` and `Replace()` cannot be used afterwards.
+* Cleanup work is processed in batches.
+* `OnDestroyed` runs after the batched cleanup attempt.
 
 Batched cleanup uses scheduler steps. It should not be described as guaranteed per-frame cleanup.
 
@@ -1299,13 +1300,13 @@ GarbageMan.configure({
 
 Available options:
 
-| Option | Description |
-|---|---|
-| `tracebacks` | Adds tracebacks to cleanup errors |
-| `captureAddTracebacks` | Stores where each resource was added |
-| `leakWarnings` | Enables or disables leak warning output |
-| `profiling` | Tracks cleanup count, last cleanup duration and peak cleanup duration |
-| `errorHandler` | Handles async cleanup errors from delayed, deferred or batched cleanup |
+| Option                 | Description                                                            |
+| ---------------------- | ---------------------------------------------------------------------- |
+| `tracebacks`           | Adds tracebacks to cleanup errors                                      |
+| `captureAddTracebacks` | Stores where each resource was added                                   |
+| `leakWarnings`         | Enables or disables leak warning output                                |
+| `profiling`            | Tracks cleanup count, last cleanup duration and peak cleanup duration  |
+| `errorHandler`         | Handles async cleanup errors from delayed, deferred or batched cleanup |
 
 To remove the error handler:
 
@@ -1336,28 +1337,28 @@ Profiling is also disabled by default. When enabled, debug summaries include cle
 
 A few important details:
 
-- `Clean()` cleans current resources and keeps the scope reusable.
-- `Destroy()` is final and prevents future mutation.
-- `AddTemporary()` cleans one resource after a delay.
-- `CleanAfter()` calls `Clean()` after a delay.
-- `DestroyAfter()` calls `Destroy()` after a delay.
-- `Remove()` cleans an object and removes it from the scope.
-- `Drop()` removes an object without cleaning it.
-- `Replace()` cleans the old tagged resource before storing the new one.
-- `ReplaceTween()` uses `"Cancel"` as the cleanup method.
-- `ReplaceConnection()` stores a connection under a tag.
-- `RemoveTag()` cleans a tagged resource.
-- `DropTag()` removes a tag without cleaning its object.
-- `RemoveTagsWithPrefix()` scans the current tag set.
-- Cleanup runs in reverse insertion order.
-- `DestroyDeferred()` marks the scope as destroyed immediately.
-- `DestroyBatched()` marks the scope as destroyed immediately.
-- `AddPromise()` only tracks started promises.
-- Debug tracebacks are optional and disabled by default.
-- `GetDebugDump()` returns real object references.
-- `GetDebugSummary()` is safer for logs.
-- Batched and delayed cleanup methods run asynchronously.
-- Async cleanup errors are reported through the configured error handler when one is set.
+* `Clean()` cleans current resources and keeps the scope reusable.
+* `Destroy()` is final and prevents future mutation.
+* `AddTemporary()` cleans one resource after a delay.
+* `CleanAfter()` calls `Clean()` after a delay.
+* `DestroyAfter()` calls `Destroy()` after a delay.
+* `Remove()` cleans an object and removes it from the scope.
+* `Drop()` removes an object without cleaning it.
+* `Replace()` cleans the old tagged resource before storing the new one.
+* `ReplaceTween()` uses `"Cancel"` as the cleanup method.
+* `ReplaceConnection()` stores a connection under a tag.
+* `RemoveTag()` cleans a tagged resource.
+* `DropTag()` removes a tag without cleaning its object.
+* `RemoveTagsWithPrefix()` scans the current tag set.
+* Cleanup runs in reverse insertion order.
+* `DestroyDeferred()` marks the scope as destroyed immediately.
+* `DestroyBatched()` marks the scope as destroyed immediately.
+* `AddPromise()` only tracks started promises.
+* Debug tracebacks are optional and disabled by default.
+* `GetDebugDump()` returns real object references.
+* `GetDebugSummary()` is safer for logs.
+* Batched and delayed cleanup methods run asynchronously.
+* Async cleanup errors are reported through the configured error handler when one is set.
 
 ---
 
@@ -1369,15 +1370,15 @@ A good rule is to create one scope for one clear lifetime.
 
 Good examples:
 
-- one UI screen
-- one character controller
-- one weapon
-- one NPC
-- one hitbox
-- one projectile
-- one temporary effect
-- one round
-- one player session object
+* one UI screen
+* one character controller
+* one weapon
+* one NPC
+* one hitbox
+* one projectile
+* one temporary effect
+* one round
+* one player session object
 
 ```lua
 local inventoryScope = GarbageMan.new("InventoryUI")
@@ -1388,11 +1389,11 @@ local projectileScope = GarbageMan.new("Projectile")
 
 Avoid using expensive debug features in hot paths:
 
-- Do not call `RemoveTagsWithPrefix()` every frame.
-- Do not spam `GetDebugDump()` in production logs.
-- Keep `captureAddTracebacks` disabled unless you are debugging leaks.
-- Keep `profiling` disabled unless you are measuring cleanup cost.
-- Prefer `GetDebugSummary()` over `GetDebugDump()` for debug panels.
+* Do not call `RemoveTagsWithPrefix()` every frame.
+* Do not spam `GetDebugDump()` in production logs.
+* Keep `captureAddTracebacks` disabled unless you are debugging leaks.
+* Keep `profiling` disabled unless you are measuring cleanup cost.
+* Prefer `GetDebugSummary()` over `GetDebugDump()` for debug panels.
 
 ---
 
@@ -1859,37 +1860,37 @@ This repository includes spec files for the main scope behavior and promise beha
 
 `GarbageMan.spec` covers the main scope behavior, including:
 
-- `Add()` and `Clean()`
-- `AddMany()`
-- `AddTemporary()`
-- `CleanAfter()`
-- `DestroyAfter()`
-- `Destroy()` final behavior
-- `Replace()` tag replacement
-- `ReplaceConnection()`
-- `ReplaceTween()`
-- `Remove()` and `RemoveTag()`
-- `Drop()` and `DropTag()`
-- `Extend()` and `Adopt()`
-- `Connect()` and `Once()`
-- `DestroyOnSignal()`
-- `BindTo()` and `BindToAncestry()`
-- `CleanDeferred()` queue merging
-- `CleanBatched()` behavior
-- `DestroyDeferred()` behavior
-- `DestroyBatched()` behavior
-- lifecycle hooks
-- debug summary
-- failed cleanup tracking
+* `Add()` and `Clean()`
+* `AddMany()`
+* `AddTemporary()`
+* `CleanAfter()`
+* `DestroyAfter()`
+* `Destroy()` final behavior
+* `Replace()` tag replacement
+* `ReplaceConnection()`
+* `ReplaceTween()`
+* `Remove()` and `RemoveTag()`
+* `Drop()` and `DropTag()`
+* `Extend()` and `Adopt()`
+* `Connect()` and `Once()`
+* `DestroyOnSignal()`
+* `BindTo()` and `BindToAncestry()`
+* `CleanDeferred()` queue merging
+* `CleanBatched()` behavior
+* `DestroyDeferred()` behavior
+* `DestroyBatched()` behavior
+* lifecycle hooks
+* debug summary
+* failed cleanup tracking
 
 `Promise.spec` covers promise-like validation and promise cleanup behavior, including:
 
-- promise-like validation
-- started promise tracking
-- cleanup cancellation
-- completed promise ignoring
-- promise removal after `finally`
-- invalid promise errors
+* promise-like validation
+* started promise tracking
+* cleanup cancellation
+* completed promise ignoring
+* promise removal after `finally`
+* invalid promise errors
 
 ---
 
