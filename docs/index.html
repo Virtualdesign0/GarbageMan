@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta
+		name="description"
+		content="GarbageMan is a typed lifecycle and cleanup manager for Roblox Luau. Track connections, instances, promises, tweens, scopes and temporary resources safely."
+	/>
+	<title>GarbageMan - Roblox Luau Cleanup Manager</title>
+	<link rel="stylesheet" href="style.css" />
+	<script src="script.js" defer></script>
+</head>
+<body>
+	<a class="skip-link" href="#main">Skip to content</a>
+
+	<header class="site-header">
+		<nav class="nav" aria-label="Primary navigation">
+			<a class="brand" href="#top" aria-label="GarbageMan home">
+				<span class="brand-mark" aria-hidden="true">GM</span>
+				<span class="brand-name">GarbageMan</span>
+			</a>
+
+			<div class="nav-links">
+				<a href="#features">Features</a>
+				<a href="#install">Install</a>
+				<a href="#examples">Examples</a>
+				<a href="#api">API</a>
+				<a href="#debug">Debug</a>
+			</div>
+
+			<a
+				class="nav-action"
+				href="https://github.com/Virtualdesign0/GarbageMan"
+				target="_blank"
+				rel="noopener noreferrer"
+			>
+				GitHub
+			</a>
+		</nav>
+	</header>
+
+	<main id="main">
+		<section id="top" class="hero">
+			<div class="hero-copy reveal">
+				<p class="kicker">Roblox Luau lifecycle utility</p>
+				<h1>GarbageMan</h1>
+				<p class="hero-text">
+					A typed cleanup scope for Roblox systems. Track connections, instances, promises,
+					tweens, render bindings and temporary resources, then clean them up with one clear
+					lifetime owner.
+				</p>
+
+				<div class="hero-actions" aria-label="Primary links">
+					<a
+						class="button button-primary"
+						href="https://github.com/Virtualdesign0/GarbageMan"
+						target="_blank"
+						rel="noopener noreferrer"
+					>
+						View on GitHub
+					</a>
+					<a
+						class="button button-secondary"
+						href="https://github.com/Virtualdesign0/GarbageMan/releases/latest"
+						target="_blank"
+						rel="noopener noreferrer"
+					>
+						Latest Release
+					</a>
+				</div>
+
+				<ul class="status-list" aria-label="Package highlights">
+					<li>Typed Luau API</li>
+					<li>v0.1.4 release</li>
+					<li>Wally, Rojo and RBXM</li>
+				</ul>
+			</div>
+
+			<div class="hero-visual reveal" aria-label="Animated cleanup lifecycle preview">
+				<div class="visual-toolbar">
+					<span>Scope: Weapon</span>
+					<span id="visual-status">Tracking resources</span>
+				</div>
+				<canvas id="lifecycleCanvas" width="720" height="520"></canvas>
+				<div class="visual-log" aria-live="polite">
+					<span class="log-dot" aria-hidden="true"></span>
+					<span id="visual-log-text">Connections, tweens and instances enter the scope.</span>
+				</div>
+			</div>
+		</section>
+
+		<section class="install-strip reveal" aria-label="Fast install">
+			<div>
+				<p class="kicker">Install</p>
+				<h2>Drop it into a Roblox project fast.</h2>
+			</div>
+			<div class="command-row">
+				<code>[dependencies] GarbageMan = "virtualdesign0/garbageman@0.1.4"</code>
+				<button class="copy-button" type="button" data-copy='[dependencies]\nGarbageMan = "virtualdesign0/garbageman@0.1.4"'>
+					Copy
+				</button>
+			</div>
+		</section>
+
+		<section class="section split reveal">
+			<div>
+				<p class="kicker">Core idea</p>
+				<h2>One scope owns one lifetime.</h2>
+			</div>
+			<p class="section-text">
+				Roblox systems often create resources that should not live forever. A UI screen has
+				connections and tweens. A weapon has input bindings. An NPC has controllers and events.
+				A projectile has a short lifetime. GarbageMan gives each of those systems a clear owner.
+			</p>
+		</section>
+
+		<section id="features" class="section reveal">
+			<div class="section-heading">
+				<p class="kicker">Features</p>
+				<h2>Small enough for gameplay code, useful enough for larger systems.</h2>
+			</div>
+
+			<div class="feature-grid">
+				<article class="feature-card">
+					<h3>Typed API</h3>
+					<p>Use typed Luau methods with predictable cleanup semantics and named scopes.</p>
+				</article>
+				<article class="feature-card">
+					<h3>Resource tracking</h3>
+					<p>Track instances, connections, functions, threads, promises, tweens and custom objects.</p>
+				</article>
+				<article class="feature-card">
+					<h3>Tagged resources</h3>
+					<p>Replace, get, remove or drop resources when only one object should own a tag.</p>
+				</article>
+				<article class="feature-card">
+					<h3>Child scopes</h3>
+					<p>Create nested lifetimes with Extend and Adopt. Parent destruction cleans children.</p>
+				</article>
+				<article class="feature-card">
+					<h3>Delayed cleanup</h3>
+					<p>Use AddTemporary, CleanAfter and DestroyAfter for hitboxes, UI, VFX and projectiles.</p>
+				</article>
+				<article class="feature-card">
+					<h3>Batched cleanup</h3>
+					<p>Split larger cleanup work across scheduler steps with CleanBatched or DestroyBatched.</p>
+				</article>
+				<article class="feature-card">
+					<h3>Signal helpers</h3>
+					<p>Connect, Once, DestroyOnSignal and ReplaceConnection keep event cleanup close.</p>
+				</article>
+				<article class="feature-card">
+					<h3>Debug tools</h3>
+					<p>Inspect summaries, leak warnings, failed cleanup info and optional profiling data.</p>
+				</article>
+			</div>
+		</section>
+
+		<section class="section band reveal">
+			<div class="section-heading">
+				<p class="kicker">Clean vs Destroy</p>
+				<h2>Reusable cleanup or final shutdown.</h2>
+			</div>
+
+			<div class="two-columns">
+				<article class="code-card">
+					<div class="card-copy">
+						<h3>Clean</h3>
+						<p>Clean removes current resources, but the scope can be used again.</p>
+					</div>
+					<div class="code-shell">
+						<button class="copy-button" type="button" data-copy="local scope = GarbageMan.new(&quot;Round&quot;)&#10;&#10;scope:Add(connection)&#10;scope:Clean()&#10;&#10;scope:Add(newConnection) -- valid">
+							Copy
+						</button>
+<pre><code>local scope = GarbageMan.new("Round")
+
+scope:Add(connection)
+scope:Clean()
+
+scope:Add(newConnection) -- valid</code></pre>
+					</div>
+				</article>
+
+				<article class="code-card">
+					<div class="card-copy">
+						<h3>Destroy</h3>
+						<p>Destroy is final. Mutating methods should not be used afterwards.</p>
+					</div>
+					<div class="code-shell">
+						<button class="copy-button" type="button" data-copy="local scope = GarbageMan.new(&quot;Weapon&quot;)&#10;&#10;scope:Add(connection)&#10;scope:Destroy(&quot;Weapon unequipped&quot;)&#10;&#10;scope:Add(otherConnection) -- error">
+							Copy
+						</button>
+<pre><code>local scope = GarbageMan.new("Weapon")
+
+scope:Add(connection)
+scope:Destroy("Weapon unequipped")
+
+scope:Add(otherConnection) -- error</code></pre>
+					</div>
+				</article>
+			</div>
+		</section>
+
+		<section id="install" class="section reveal">
+			<div class="section-heading">
+				<p class="kicker">Installation</p>
+				<h2>Use it with Rojo, Wally or a direct RBXM file.</h2>
+			</div>
+
+			<div class="install-grid">
+				<article class="install-card">
+					<h3>Rojo</h3>
+					<p>Mount the module into ReplicatedStorage and require the folder directly.</p>
+					<div class="code-shell">
+						<button class="copy-button" type="button" data-copy='{&#10;  "name": "GarbageMan",&#10;  "tree": {&#10;    "$className": "DataModel",&#10;    "ReplicatedStorage": {&#10;      "$className": "ReplicatedStorage",&#10;      "GarbageMan": { "$path": "src/GarbageMan" }&#10;    }&#10;  }&#10;}'>
+							Copy
+						</button>
+<pre><code>{
+  "name": "GarbageMan",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "$className": "ReplicatedStorage",
+      "GarbageMan": {
+        "$path": "src/GarbageMan"
+      }
+    }
+  }
+}</code></pre>
+					</div>
+				</article>
+
+				<article class="install-card">
+					<h3>Wally</h3>
+					<p>Add GarbageMan as a dependency, then install packages.</p>
+					<div class="code-shell">
+						<button class="copy-button" type="button" data-copy='[dependencies]&#10;GarbageMan = "virtualdesign0/garbageman@0.1.4"&#10;&#10;# then&#10;wally install'>
+							Copy
+						</button>
+<pre><code>[dependencies]
+GarbageMan = "virtualdesign0/garbageman@0.1.4"
+
+# then
+wally install</code></pre>
+					</div>
+				</article>
+
+				<article class="install-card">
+					<h3>RBXM</h3>
+					<p>Download the latest release asset and drag it into ReplicatedStorage.</p>
+					<div class="code-shell">
+						<button class="copy-button" type="button" data-copy="https://github.com/Virtualdesign0/GarbageMan/releases/latest/download/GarbageMan.rbxm">
+							Copy
+						</button>
+<pre><code>https://github.com/Virtualdesign0/GarbageMan/releases/latest/download/GarbageMan.rbxm</code></pre>
+					</div>
+				</article>
+			</div>
+		</section>
+
+		<section id="examples" class="section reveal">
+			<div class="section-heading">
+				<p class="kicker">Examples</p>
+				<h2>Common Roblox lifetimes.</h2>
+			</div>
+
+			<div class="example-grid">
+				<article class="example-card">
+					<h3>UI Scope</h3>
+					<div class="code-shell">
+						<button class="copy-button" type="button" data-copy="local scope = GarbageMan.new(&quot;InventoryUI&quot;)&#10;&#10;local frame = scope:Copy(InventoryTemplate)&#10;frame.Parent = playerGui&#10;&#10;scope:DestroyOnSignal(closeButton.Activated, &quot;Inventory closed&quot;)&#10;&#10;local tween = TweenService:Create(frame, tweenInfo, {&#10;&#9;Position = UDim2.fromScale(0.5, 0.5),&#10;})&#10;&#10;scope:ReplaceTween(&quot;Tween:Open&quot;, tween)&#10;tween:Play()">
+							Copy
+						</button>
+<pre><code>local scope = GarbageMan.new("InventoryUI")
+
+local frame = scope:Copy(InventoryTemplate)
+frame.Parent = playerGui
+
+scope:DestroyOnSignal(closeButton.Activated, "Inventory closed")
+
+local tween = TweenService:Create(frame, tweenInfo, {
+	Position = UDim2.fromScale(0.5, 0.5),
+})
+
+scope:ReplaceTween("Tween:Open", tween)
+tween:Play()</code></pre>
+					</div>
+				</article>
+
+				<article class="example-card">
+					<h3>Temporary Hitbox</h3>
+					<div class="code-shell">
+						<button class="copy-button" type="button" data-copy="local scope = GarbageMan.new(&quot;Hitbox&quot;)&#10;&#10;local hitbox = Instance.new(&quot;Part&quot;)&#10;hitbox.Name = &quot;TemporaryHitbox&quot;&#10;hitbox.Anchored = true&#10;hitbox.CanCollide = false&#10;hitbox.Parent = workspace&#10;&#10;scope:AddTemporary(hitbox, 0.25)&#10;&#10;scope:Connect(hitbox.Touched, function(hit)&#10;&#9;print(&quot;Touched:&quot;, hit.Name)&#10;end)">
+							Copy
+						</button>
+<pre><code>local scope = GarbageMan.new("Hitbox")
+
+local hitbox = Instance.new("Part")
+hitbox.Name = "TemporaryHitbox"
+hitbox.Anchored = true
+hitbox.CanCollide = false
+hitbox.Parent = workspace
+
+scope:AddTemporary(hitbox, 0.25)
+
+scope:Connect(hitbox.Touched, function(hit)
+	print("Touched:", hit.Name)
+end)</code></pre>
+					</div>
+				</article>
+
+				<article class="example-card">
+					<h3>Projectile Scope</h3>
+					<div class="code-shell">
+						<button class="copy-button" type="button" data-copy="local projectileScope = GarbageMan.new(&quot;Projectile&quot;)&#10;&#10;projectileScope:DestroyAfter(10, &quot;Projectile expired&quot;)&#10;&#10;local projectile = projectileScope:Construct(Instance, &quot;Part&quot;)&#10;projectile.Name = &quot;Projectile&quot;&#10;projectile.Parent = workspace&#10;&#10;projectileScope:Connect(projectile.Touched, function(hit)&#10;&#9;projectileScope:Destroy(&quot;Projectile hit&quot;)&#10;end)">
+							Copy
+						</button>
+<pre><code>local projectileScope = GarbageMan.new("Projectile")
+
+projectileScope:DestroyAfter(10, "Projectile expired")
+
+local projectile = projectileScope:Construct(Instance, "Part")
+projectile.Name = "Projectile"
+projectile.Parent = workspace
+
+projectileScope:Connect(projectile.Touched, function(hit)
+	projectileScope:Destroy("Projectile hit")
+end)</code></pre>
+					</div>
+				</article>
+
+				<article class="example-card">
+					<h3>Batched Round Cleanup</h3>
+					<div class="code-shell">
+						<button class="copy-button" type="button" data-copy="local roundScope = GarbageMan.new(&quot;Round&quot;)&#10;&#10;for _, npc in npcs do&#10;&#9;roundScope:Add(npc)&#10;end&#10;&#10;roundScope:DestroyBatched(&quot;Round ended&quot;, 50)">
+							Copy
+						</button>
+<pre><code>local roundScope = GarbageMan.new("Round")
+
+for _, npc in npcs do
+	roundScope:Add(npc)
+end
+
+roundScope:DestroyBatched("Round ended", 50)</code></pre>
+					</div>
+				</article>
+			</div>
+		</section>
+
+		<section id="api" class="section reveal">
+			<div class="section-heading">
+				<p class="kicker">API Preview</p>
+				<h2>The methods you will probably use the most.</h2>
+			</div>
+
+			<div class="api-table-wrap">
+				<table class="api-table">
+					<thead>
+						<tr>
+							<th>Method</th>
+							<th>Purpose</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr><td><code>Add()</code></td><td>Track one resource.</td></tr>
+						<tr><td><code>AddMany()</code></td><td>Track multiple default-cleanable resources.</td></tr>
+						<tr><td><code>Replace()</code></td><td>Store one tagged resource and clean the old one.</td></tr>
+						<tr><td><code>Connect()</code></td><td>Connect to a signal and track the connection.</td></tr>
+						<tr><td><code>ReplaceTween()</code></td><td>Replace a tagged tween and cancel the previous one.</td></tr>
+						<tr><td><code>AddTemporary()</code></td><td>Clean one resource after a delay.</td></tr>
+						<tr><td><code>Clean()</code></td><td>Clean current resources while keeping the scope reusable.</td></tr>
+						<tr><td><code>Destroy()</code></td><td>Final cleanup. The scope should not be used afterwards.</td></tr>
+						<tr><td><code>Extend()</code></td><td>Create a child scope owned by the current scope.</td></tr>
+						<tr><td><code>DestroyBatched()</code></td><td>Destroy the scope and split cleanup work into batches.</td></tr>
+					</tbody>
+				</table>
+			</div>
+		</section>
+
+		<section id="debug" class="section band reveal">
+			<div class="section-heading">
+				<p class="kicker">Debugging</p>
+				<h2>Find leaks before they become annoying.</h2>
+			</div>
+
+			<div class="two-columns">
+				<article class="code-card">
+					<div class="card-copy">
+						<h3>Scope summary</h3>
+						<p>Use summaries for safer debug panels without printing real object references.</p>
+					</div>
+					<div class="code-shell">
+						<button class="copy-button" type="button" data-copy="for _, summary in GarbageMan.Debug.getSummary() do&#10;&#9;print(summary.name, summary.size, summary.age, summary.destroyed)&#10;end">
+							Copy
+						</button>
+<pre><code>for _, summary in GarbageMan.Debug.getSummary() do
+	print(
+		summary.name,
+		summary.size,
+		summary.age,
+		summary.destroyed
+	)
+end</code></pre>
+					</div>
+				</article>
+
+				<article class="code-card">
+					<div class="card-copy">
+						<h3>Configuration</h3>
+						<p>Enable tracebacks, leak warnings or profiling while testing.</p>
+					</div>
+					<div class="code-shell">
+						<button class="copy-button" type="button" data-copy="GarbageMan.configure({&#10;&#9;tracebacks = true,&#10;&#9;captureAddTracebacks = true,&#10;&#9;leakWarnings = true,&#10;&#9;profiling = true,&#10;})">
+							Copy
+						</button>
+<pre><code>GarbageMan.configure({
+	tracebacks = true,
+	captureAddTracebacks = true,
+	leakWarnings = true,
+	profiling = true,
+})</code></pre>
+					</div>
+				</article>
+			</div>
+		</section>
+
+		<section class="section reveal">
+			<div class="section-heading">
+				<p class="kicker">Behavior Notes</p>
+				<h2>Simple rules that keep scopes clean.</h2>
+			</div>
+
+			<div class="note-grid">
+				<article class="note">
+					<h3>Do not create a scope every frame.</h3>
+					<p>Create scopes for real lifetimes like UI screens, weapons, NPCs or projectiles.</p>
+				</article>
+				<article class="note">
+					<h3>Use Drop only for ownership transfer.</h3>
+					<p>Remove cleans the resource. Drop releases it without cleaning.</p>
+				</article>
+				<article class="note">
+					<h3>Keep tags for cleanup ownership.</h3>
+					<p>Tags are useful for replacement cleanup, not for all gameplay state.</p>
+				</article>
+				<article class="note">
+					<h3>Destroy final lifetimes.</h3>
+					<p>If the system is finished for good, prefer Destroy over Clean.</p>
+				</article>
+			</div>
+		</section>
+
+		<section class="cta reveal">
+			<div>
+				<p class="kicker">Ready to use</p>
+				<h2>Add clear cleanup ownership to Roblox systems.</h2>
+				<p>
+					GarbageMan stays light for gameplay code while still covering debugging, child
+					scopes, delayed cleanup and batched shutdown.
+				</p>
+			</div>
+			<div class="cta-actions">
+				<a
+					class="button button-primary"
+					href="https://github.com/Virtualdesign0/GarbageMan"
+					target="_blank"
+					rel="noopener noreferrer"
+				>
+					Open Repository
+				</a>
+				<a
+					class="button button-secondary"
+					href="https://github.com/Virtualdesign0/GarbageMan/releases/latest/download/GarbageMan.rbxm"
+				>
+					Download RBXM
+				</a>
+			</div>
+		</section>
+	</main>
+
+	<footer class="footer">
+		<p>GarbageMan &middot; MIT License</p>
+		<p>Made for Roblox Luau projects.</p>
+	</footer>
+</body>
+</html>
